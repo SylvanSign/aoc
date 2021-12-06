@@ -1,6 +1,5 @@
 import Data.List (sort)
 import qualified Data.Map as Map
-import Debug.Trace (trace)
 
 data Point = Point Int Int deriving (Eq, Ord, Show)
 
@@ -18,30 +17,25 @@ pointCointer line@(Line p1@(Point x1 y1) p2@(Point x2 y2)) map = updatedMap
   where
     [minX, maxX] = sort [x1, x2]
     [minY, maxY] = sort [y1, y2]
-    points =
-      sort
-        [ p3
-          | x <- [minX .. maxX],
-            y <- [minY .. maxY],
-            let p3 = Point x y,
-            between p1 p2 p3
-        ]
+    points = pointsBetween p1 p2
     updatedMap = foldr (\p -> Map.insertWith (+) p 1) map points
 
-between :: Point -> Point -> Point -> Bool
-between x y z = abs (crossProduct x y z) == 0 && dotProduct x y z <= squaredLength x y
+pointsBetween :: Point -> Point -> [Point]
+pointsBetween p1 p2
+  | p1 == p2 = [p1]
+pointsBetween p1@(Point x1 y1) p2@(Point x2 y2) = gatherPoints xMov yMov p1 p2
+  where
+    mover x y = case compare x y of
+      LT -> succ
+      GT -> pred
+      EQ -> id
+    xMov = mover x1 x2
+    yMov = mover y1 y2
 
-crossProduct :: Point -> Point -> Point -> Int
-crossProduct (Point x1 y1) (Point x2 y2) (Point x3 y3) =
-  (y3 - y1) * (x2 - x1) - (x3 - x1) * (y2 - y1)
-
-dotProduct :: Point -> Point -> Point -> Int
-dotProduct (Point x1 y1) (Point x2 y2) (Point x3 y3) =
-  (x3 - x1) * (x2 - x1) + (y3 - y1) * (y2 - y1)
-
-squaredLength :: Point -> Point -> Int
-squaredLength (Point x1 y1) (Point x2 y2) =
-  (x2 - x1) ^ 2 + (y2 - y1) ^ 2
+gatherPoints :: (Int -> Int) -> (Int -> Int) -> Point -> Point -> [Point]
+gatherPoints xMov yMov p1@(Point x y) p2
+  | p1 == p2 = [p2]
+  | otherwise = p1 : gatherPoints xMov yMov (Point (xMov x) (yMov y)) p2
 
 nonDiagonal :: Line -> Bool
 nonDiagonal (Line (Point x1 y1) (Point x2 y2)) = x1 == x2 || y1 == y2
