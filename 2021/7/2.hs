@@ -6,10 +6,12 @@ main = do
   print $ manyCrabs input
 
 manyCrabs :: [Int] -> Int
-manyCrabs positions = minimum $ map (`crabs` positions) [minimum positions .. maximum positions]
+manyCrabs positions = minimum $ map (`crabs` positions) [floor avg]
+  where
+    avg = fromIntegral (sum positions) / fromIntegral (length positions)
 
 crabs :: Int -> [Int] -> Int
-crabs avg = foldr (\p acc -> acc + fuelCost p avg) 0
+crabs spot = foldr (\p acc -> acc + fuelCost p spot) 0
   where
     fuelCost x y =
       let n = abs (x - y)
@@ -17,7 +19,7 @@ crabs avg = foldr (\p acc -> acc + fuelCost p avg) 0
 
 parseInput :: IO [Int]
 parseInput = do
-  input <- readFile "input"
+  input <- readFile "sample"
   return $ (map read . splitOn ',') input
 
 splitOn :: Char -> String -> [String]
