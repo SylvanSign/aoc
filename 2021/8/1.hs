@@ -9,6 +9,7 @@ uniqueFolder (i, o) acc = acc + count
     uniques = filter (`elem` [2, 3, 4, 7]) letterCounts
     count = length uniques
 
+pairs :: FilePath -> IO [([String], [String])]
 pairs file = do
   text <- readFile file
   let pairs = (map ((\[i, o] -> (i, o)) . map words . splitOn '|') . lines) text
