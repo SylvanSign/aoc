@@ -1,4 +1,5 @@
 import Data.List
+import Data.Ord (Down (Down))
 import Data.Semigroup (diff)
 
 main = do
@@ -42,7 +43,7 @@ intersectFold :: [String] -> String
 intersectFold = foldr1 intersect . sort
 
 differenceFold :: [String] -> String
-differenceFold = foldl1' (\\) . reverse . sort
+differenceFold = foldl1' (\\) . sortOn (Data.Ord.Down . length)
 
 lengthsOf :: Int -> [String] -> [String]
 lengthsOf len = filter ((== len) . length)
