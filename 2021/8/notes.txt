@@ -1,4 +1,4 @@
- 0:6     1:2     2:5     3:5      4:4
+   6       2       5       5        4
  aaaa    ....    aaaa    aaaa    ....
 b    c  .    c  .    c  .    c  b    c
 b    c  .    c  .    c  .    c  b    c
@@ -7,7 +7,7 @@ e    f  .    f  e    .  .    f  .    f
 e    f  .    f  e    .  .    f  .    f
  gggg    ....    gggg    gggg    ....
 
-  5:5     6:6     7:3     8:7    9:6
+   5       6       3       7      6
  aaaa    aaaa    aaaa    aaaa    aaaa
 b    .  b    .  .    c  b    c  b    c
 b    .  b    .  .    c  b    c  b    c
@@ -17,7 +17,11 @@ b    .  b    .  .    c  b    c  b    c
  gggg    gggg    ....    gggg    gggg
 
 a = 3 \\ 2
-b = (int 6s 4) \\  2
+b = (intersect 6s 4) \\  2
+f = (intersect 6s 4) intersect 2
+c = two \\ f
+d = (\\ four bcf)
+
 ab -> cf
 dab -> acf
 => d -> a
