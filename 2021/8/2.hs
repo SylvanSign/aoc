@@ -1,43 +1,61 @@
 import Data.List
+import qualified Data.Map as Map
 import Data.Ord (Down (Down))
-import Data.Semigroup (diff)
 
 main = do
   pairs <- pairs "input"
-  print $ foldr uniqueFolder 0 pairs
+  (print . sum . map solve) pairs
 
-solve :: [String] -> String
-solve inputs = foo
+-- print $ foldr uniqueFolder 0 pairs
+
+solve :: ([String], [[Char]]) -> Int
+solve (inputs, outputs) = decoded
   where
-    foo = "todo"
+    two = (head . lengthsOf 2) inputs
+    three = (head . lengthsOf 3) inputs
+    four = (head . lengthsOf 4) inputs
+    fives = lengthsOf 5 inputs
+    sixes = lengthsOf 6 inputs
+    seven = (head . lengthsOf 7) inputs
+    a = three \\ two
+    b = intersectFold (four : sixes) \\ two
+    c = two \\ f
+    d = differenceFold $ four : [b, c, f]
+    e = differenceFold [seven, four, three] \\ g
+    f = intersectFold (four : sixes) `intersect` two
+    g = intersectFold $ differenceFold [seven, four, three] : sixes
+    wiring =
+      Map.fromList
+        [ (head a, 'a'),
+          (head b, 'b'),
+          (head c, 'c'),
+          (head d, 'd'),
+          (head e, 'e'),
+          (head f, 'f'),
+          (head g, 'g')
+        ]
+    decoded = read $ map (convert . sort . map (decode wiring)) outputs
 
-inputs = ["acedgfb", "cdfbe", "gcdfa", "fbcad", "dab", "cefabd", "cdfgeb", "eafb", "cagedb", "ab"]
+convert :: String -> Char
+convert code =
+  case code of
+    "abcefg" -> '0'
+    "cf" -> '1'
+    "acdeg" -> '2'
+    "acdfg" -> '3'
+    "bcdf" -> '4'
+    "abdfg" -> '5'
+    "abdefg" -> '6'
+    "acf" -> '7'
+    "abcdefg" -> '8'
+    "abcdfg" -> '9'
+    _ -> error "yikers"
 
-two = (head . lengthsOf 2) inputs
-
-three = (head . lengthsOf 3) inputs
-
-four = (head . lengthsOf 4) inputs
-
-fives = lengthsOf 5 inputs
-
-sixes = lengthsOf 6 inputs
-
-seven = (head . lengthsOf 7) inputs
-
-a = three \\ two
-
-b = intersectFold (four : sixes) \\ two
-
-c = two \\ f
-
-d = differenceFold $ four : [b, c, f]
-
-e = differenceFold [seven, four, three] \\ g
-
-f = intersectFold (four : sixes) `intersect` two
-
-g = intersectFold $ differenceFold [seven, four, three] : sixes
+decode :: Map.Map Char Char -> Char -> Char
+decode wiring letter =
+  case Map.lookup letter wiring of
+    Just l -> l
+    _ -> error "yikers"
 
 intersectFold :: [String] -> String
 intersectFold = foldr1 intersect . sort
